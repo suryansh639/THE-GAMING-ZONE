@@ -1,0 +1,366 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <conio.h>
+#include <time.h>
+#include <windows.h>
+#include <string.h>
+
+int height = 20, width = 20, x, y, foodx, foody, flag, gameEnd, score;
+int tailx[100], taily[100];
+int piece = 0;
+int number;
+time_t rawtime;
+struct tm *timeinfo;
+void SetColor(const int Color)
+{
+    SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), Color);
+}
+
+void makelogic()
+{
+    int i;
+    int prevx, prevy, prev2x, prev2y;
+    prevx = tailx[0];
+    prevy = taily[0];
+    tailx[0] = x;
+    taily[0] = y;
+    for (i = 1; i <= piece; i++)
+    {
+        prev2x = tailx[i];
+        prev2y = taily[i];
+        tailx[i] = prevx;
+        taily[i] = prevy;
+        prevx = prev2x;
+        prevy = prev2y;
+    }
+
+    switch (flag)
+    {
+    case 1:
+    {
+        x--;
+        break;
+    }
+    case 2:
+    {
+        x++;
+        break;
+    }
+    case 3:
+    {
+        y--;
+        break;
+    }
+    case 4:
+    {
+        y++;
+        break;
+    }
+    }
+    if (x == 0 || x == height || y == 0 || y == width)
+    {
+        gameEnd = 1;
+    }
+    if (x == foodx && y == foody)
+    {
+    label3:
+        foodx = rand() % 20;
+        if (foodx == 0)
+        {
+            goto label3;
+        }
+
+    label4:
+        foody = rand() % 20;
+        if (foody == 0)
+        {
+            goto label4;
+        }
+        score++;
+        piece++;
+    }
+}
+void input()
+{
+    if (kbhit())
+    {
+        switch (getch())
+        {
+        case 'w':
+            flag = 1;
+            break;
+
+        case 's':
+            flag = 2;
+            break;
+
+        case 'a':
+            flag = 3;
+            break;
+
+        case 'd':
+            flag = 4;
+            break;
+        }
+    }
+}
+void setup()
+{
+    x = height / 2;
+    y = width / 2;
+label1:
+    foodx = rand() % 20;
+    if (foodx == 0)
+    {
+        goto label1;
+    }
+
+label2:
+    foody = rand() % 20;
+    if (foody == 0)
+    {
+        goto label2;
+    }
+    gameEnd = 0;
+    score = 0;
+}
+void draw()
+{
+    system("cls");
+    int i, j, k, ch;
+    for (i = 0; i <= height; i++)
+    {
+        for (j = 0; j <= width; j++)
+        {
+            if (i == 0 || i == height || j == 0 || j == width)
+            {
+                printf("*");
+            }
+            else
+            {
+                if (i == x && j == y)
+                {
+                    printf("0");
+                }
+                else if (i == foodx && j == foody)
+                {
+                    printf("@");
+                }
+                else
+                {
+                    ch = 0;
+                    for (k = 0; k < piece; k++)
+                    {
+                        if (i == tailx[k] && j == taily[k])
+                        {
+                            printf("o");
+                            ch = 1;
+                        }
+                    }
+                    if (ch == 0)
+                    {
+                        printf(" ");
+                    }
+                }
+            }
+        }
+        printf("\n");
+    }
+    printf("\n\n\n\n\n\t\t**************************************************\n\n");
+}
+
+void game()
+{
+    int guess, nguesses = 1;
+    srand(time(0));
+    number = rand() % 10 + 1;
+    //printf("The random number is %d\n", number);
+    do
+    {
+        printf("Guess the ZCODE between 1 to 10\n\t\t");
+        scanf("%d", &guess);
+        if (guess > number)
+        {
+
+            printf("\t\tLower please !\n\t\t");
+        }
+        else if (guess < number)
+        {
+            printf("\t\tHigher please !\n\t\t");
+        }
+        else
+        {
+            printf("\n\n\n\t\tZCODE FOUND !!!\n\n");
+            printf("\t\tYou guessed it in %d attempts\n\t", nguesses);
+            printf("\t\tZCODE = %d", number);
+        }
+        nguesses++;
+    } while (guess != number);
+}
+void main()
+{
+
+    int g = 1;
+    int retry;
+    char name[20];
+
+    SetColor(FOREGROUND_GREEN);
+
+    printf("\t\t==================================================\n");
+    printf("\t\t        W E L C O M E   TO   R E S C U E!         \n");
+    printf("\t\t==================================================\n\n");
+    SetColor(FOREGROUND_BLUE);
+    printf("\t\t                                 `y`               \n");
+    printf("\t\t                                `/h`               \n");
+    printf("\t\t                                -d/`               \n");
+    printf("\t\t                             ``/dy`                \n");
+    printf("\t\t                           ``-smo`                 \n");
+    printf("\t\t            ````        ``-+ymy:`                  \n");
+    printf("\t\t         ``.-.``    ``-/shmdo-``   `.``            \n");
+    printf("\t\t         `+s.`  ``-/shmmds:.`      `o+.``          \n");
+    printf("\t\t       `.ym-```-+hmmmho:.``         .dd+.          \n");
+    printf("\t\t       .hNd` .sdNNms:../+sss+:.`    `oNmd/`        \n");
+    printf("\t\t      `oNNm-:dmNms-`.sdmNNNNNmd+``  `-mNNmy-`      \n");
+    printf("\t\t      `yNNNhdNNm/``.hNNNNNNNNNNNy`   .mNNNNd/`     \n");
+    printf("\t\t      `sNNNNNNN/`  /NNNNNNNNNNNNm-  `:mNNNNNm-`    \n");
+    printf("\t\t      `.dNNNNNd`   :mNNNNNNNNNNNm.``.hNNNNNNNs``   \n");
+    printf("\t\t       `-hmNNNd`   `+mNNNNNNNNNd/``-hNNmoyNNNs`    \n");
+    printf("\t\t         .+dNNm.    `:shmmmmdho-`-smNNd+`-mNm-     \n");
+    printf("\t\t         ``-smNo`     ``--:-.../ymNmds-``-mm+`     \n");
+    printf("\t\t           ``-sd-`        `./ydmmds/.`  `oh:`      \n");
+    printf("\t\t              `-/`     `.+ydmds/-`     `/+.`       \n");
+    printf("\t\t                    ``:sdds/-`        `.`          \n");
+    printf("\t\t                   `-ydy:``                        \n");
+    printf("\t\t                  `/dy-`                           \n");
+    printf("\t\t                  :mo``                            \n");
+    printf("\t\t                 `ho`                              \n");
+    printf("\t\t                 .h`                               \n");
+    SetColor(FOREGROUND_GREEN);
+    printf("\t\t==================================================\n");
+    SetColor(FOREGROUND_RED);
+    printf("\n\t\t\tPress any key to continue....\n");
+    getch();
+
+    system("cls");
+    printf("\t\t==================================================\n");
+    printf("\t\t                   N A M E                        \n");
+    printf("\t\t==================================================\n\n");
+    SetColor(FOREGROUND_GREEN);
+    printf("\n\n\t\tENTER YOUR NAME !!\n");
+    printf("\t\t");
+    scanf("%s", name);
+
+    system("cls");
+    SetColor(FOREGROUND_GREEN);
+    printf("\t\t**************************************************\n\n");
+    printf("\t\t**************************************************\n");
+    SetColor(FOREGROUND_RED);
+    printf("\t\t\t\tHi, %s\n", name);
+    printf("\t\tMyself NOVA, In 2077 the whole world will be conquered\n\t\tby ZORGON, A mystic creature that was a mistake of one\n\t\tof our oficials and converted into a massive demon.\n\t\tHe is now devastating each and everything. So I\n\t\twas sent to past to correct the mistake and save the mankind.\n\n");
+    SetColor(FOREGROUND_BLUE);
+    printf("\t\tI successfully reached there, stole the DNA codes of\n\t\tmutation and proceeded to exit door but Its not opening\n\n\t\tSomething is written on it here I read :");
+    printf("\n\n\t\tPress any key to continue....\n");
+    getch();
+    system("cls");
+    SetColor(FOREGROUND_GREEN);
+    printf("\t\t**************************************************\n\n");
+    printf("\t\tTO OPEN THE DOOR .....\n\n");
+    printf("\t\t1.You have to guess the zcode(b/w 1-10) ASAP\n");
+    printf("\t\t2.After guessing you have to score same(code) in snake xenzia\n");
+    SetColor(FOREGROUND_RED);
+    printf("\n\n\t\tPLEASE HELP ME OUT I HAVE LESS TIME !!!!");
+    printf("\n\n\n\t\tPress any key to start....\n");
+    getch();
+    system("cls");
+    time(&rawtime);
+    timeinfo = localtime(&rawtime);
+    SetColor(FOREGROUND_BLUE);
+    printf("\t\t                %s                          \n", asctime(timeinfo));
+    printf("\t\t==================================================\n");
+    printf("\t\t             G U E S S  THE  Z C O D E            \n");
+    printf("\t\t==================================================\n");
+    printf("\n\t\t");
+    SetColor(FOREGROUND_GREEN);
+    game();
+    printf("\n\t\tPress any key to continue....\n");
+    getch();
+ret:
+    system("cls");
+    SetColor(FOREGROUND_RED);
+    printf("\n\n\t\t==================================================\n");
+    printf("\t\t              F E E D  THE  S N A K E             \n");
+    printf("\t\t==================================================\n");
+    SetColor(FOREGROUND_GREEN);
+    printf("\n\t\tDONT TOUCH THE BOUNDARIES !!!!...\n\n");
+    printf("\n\n\n\t\tPress any key to start....\n");
+    getch();
+    SetColor(FOREGROUND_BLUE);
+    setup();
+    while (g = 1)
+
+    {
+        input();
+        draw();
+        makelogic();
+        if (number == score)
+        {
+            printf("\n\n\t\t\t Z C O D E   M A T C H E D\n");
+            break;
+        }
+        else if (gameEnd == 1)
+        {
+            printf("\n\n\t\t\t Y O U  L O S E\n");
+            printf("\n\t\tPress (5) to retry or any Number to continue....\n");
+            printf("\t\t");
+            scanf("%d", &retry);
+            if (retry == 5)
+            {
+                goto ret;
+            }
+            else
+            {
+                goto end;
+            }
+        }
+    }
+    SetColor(FOREGROUND_GREEN);
+
+    printf("\n\n\t\tPress any key to continue....\n");
+    getch();
+    system("cls");
+    time(&rawtime);
+    timeinfo = localtime(&rawtime);
+    SetColor(FOREGROUND_BLUE);
+    printf("\t\t               %s                          \n", asctime(timeinfo));
+    printf("\n\n\n\t\t==================================================\n");
+    printf("\t\t             G A T E   U N L O C K E D            \n");
+    printf("\t\t==================================================\n");
+    SetColor(FOREGROUND_RED);
+    printf("\n\n\t\tThanks  %s", name);
+    printf("\n\n\t\tYou saved me,  You saved human mankind !!!!!!......\n");
+    printf("\n\n\t\tPress any key to continue....\n");
+    getch();
+end:
+    system("cls");
+    SetColor(FOREGROUND_GREEN);
+    printf("\n\n\n\n\t\t==================================================\n");
+    printf("\t\t                G A M E   O V E R                 \n");
+    printf("\t\t==================================================\n");
+    SetColor(FOREGROUND_RED);
+    printf("\t\t                  C R E D I T S                   \n\n");
+    SetColor(FOREGROUND_BLUE);
+    printf("\n\n\t\tSTORY by - SURYANSH GUPTA\n");
+    SetColor(FOREGROUND_GREEN);
+    printf("\t\tSNAKE DESIGNING, OVERALL LAYOUT(formatting)and GAME\n");
+    SetColor(FOREGROUND_RED);
+    printf("\t\tALGORITHM by - SURYANSH GUPTA\n");
+    SetColor(FOREGROUND_BLUE);
+    printf("\t\tNUMBER GUESSING by - SURYANSH GUPTA\n");
+    SetColor(FOREGROUND_GREEN);
+    printf("\n\n\n\t\t==================================================\n");
+    printf("\t\t         T H A N K S  FOR  P L A Y I N G          \n");
+    printf("\t\t==================================================\n");
+    SetColor(FOREGROUND_INTENSITY);
+    printf("\n\n\t\tPress any key to exit....\n");
+    getch();
+}
